@@ -12,9 +12,30 @@ class MovieController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
-        return Movie::all();
+        if (!$request->input('title')){
+            return Movie::all();
+        }
+
+        return $this->search($request->input('title'));
+
+    }
+
+    public function search($str)
+    {
+        $movies = Movie::all();
+        $found = array();
+        
+
+        foreach ($movies as &$movie) {
+            if (strpos($movie->title, $str)) {
+                \Log::info('enable');
+                $found[] = $movie;
+            }
+        }
+
+        return $found;        
     }
 
     /**
