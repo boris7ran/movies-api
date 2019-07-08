@@ -37,6 +37,13 @@ class MovieController extends Controller
     {
         $movie = new Movie();
 
+        \Log::info($request);
+        
+        $request->duration = intval($request->duration);
+        $this->validate(request(), Movie::STORE_RULES);
+
+        \Log::info($request);
+
         $movie->title = $request->input('title');
         $movie->director = $request->input('director');
         $movie->imageUrl = $request->input('imageUrl');
@@ -81,6 +88,9 @@ class MovieController extends Controller
     public function update(Request $request, $id)
     {
         $movie = Movie::find($id);
+
+        $this->validate(request(), Movie::STORE_RULES);
+
 
         $movie->title = $request->input('title');
         $movie->director = $request->input('director');
