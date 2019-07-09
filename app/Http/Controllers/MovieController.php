@@ -14,18 +14,22 @@ class MovieController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function index(Request $request)
-    {
-        if (!$request->input('title')){
-            return Movie::all();
-        }
-
-        return $this->search($request->input('title'));
-
+    {   
+        return $this->search($title = $request->input('title'), $next = $request->input('next'), $skip = $request->input('skip'));
     }
 
-    public function search($title)
+    public function search($title, $next = false, $skip = 0)
     {
-        return Movie::where('title', 'LIKE', '%'.$title.'%')->get();;        
+        $length = Movie::get()->count();
+
+        if ($next){
+            return Movie::where('title', 'LIKE', '%'.$title.'%')->skip($skip)->take($next)->get();
+        }
+        else if($skip){
+            return Movie::where('title', 'LIKE', '%'.$title.'%')->skip($skip)->take($length)->get();
+        }   
+
+        return Movie::where('title', 'LIKE', '%'.$title.'%')->get();
     }
 
     /**
@@ -48,6 +52,7 @@ class MovieController extends Controller
     {
         $movie = new Movie();
 
+        //Ne treba ovako
         $this->validate($request, ['title' => new DateAndTitleUnique($request->input('releaseDate'))]);
 
         $request->duration = intval($request->duration);
@@ -99,8 +104,11 @@ class MovieController extends Controller
     {
         $movie = Movie::find($id);
 
-        $this->validate(request(), Movie::STORE_RULES);
+        $this->validate($request, ['title' => new DateAndTitleUnique($request->input('releaseDate'))]);
 
+        $request->duration = intval($request->duration);
+
+        $this->validate(request(), Movie::STORE_RULES);
 
         $movie->title = $request->input('title');
         $movie->director = $request->input('director');
@@ -127,5 +135,9 @@ class MovieController extends Controller
         $movie->delete();
 
         return 'Movie ' . $movie->title . 'succesfully deleted!';
+    }
+    
+    private function dateAndTitleUnique(){
+
     }
 }

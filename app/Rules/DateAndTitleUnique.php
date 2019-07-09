@@ -26,9 +26,8 @@ class DateAndTitleUnique implements Rule
      */
     public function passes($attribute, $value)
     {
-        \Log::info(Movie::where('title', $value)->first());
         if(Movie::where('title', $value)->first()){
-            
+
             if(Movie::where('releaseDate',  $this->releaseDate)->first()){
                 return false;
             }
