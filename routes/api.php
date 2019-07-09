@@ -15,7 +15,7 @@ use Illuminate\Http\Request;
 
 Route::middleware('api')->get('/movies', 'MovieController@index');
 
-Route::middleware('api')->get('/movies?title={title}', 'MovieController@index');
+/* Route::middleware('api')->get('/movies?title={title}', 'MovieController@index'); */
 
 Route::middleware('api')->get('/movies/{id}', 'MovieController@show');
 

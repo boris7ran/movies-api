@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Movie;
+use App\Rules\DateAndTitleUnique;
 
 class MovieController extends Controller
 {
@@ -22,20 +23,9 @@ class MovieController extends Controller
 
     }
 
-    public function search($str)
+    public function search($title)
     {
-        $movies = Movie::all();
-        $found = array();
-        
-
-        foreach ($movies as &$movie) {
-            if (strpos($movie->title, $str)) {
-                \Log::info('enable');
-                $found[] = $movie;
-            }
-        }
-
-        return $found;        
+        return Movie::where('title', 'LIKE', '%'.$title.'%')->get();;        
     }
 
     /**
@@ -58,12 +48,11 @@ class MovieController extends Controller
     {
         $movie = new Movie();
 
-        \Log::info($request);
-        
-        $request->duration = intval($request->duration);
-        $this->validate(request(), Movie::STORE_RULES);
+        $this->validate($request, ['title' => new DateAndTitleUnique($request->input('releaseDate'))]);
 
-        \Log::info($request);
+        $request->duration = intval($request->duration);
+        
+        $this->validate($request, Movie::STORE_RULES);
 
         $movie->title = $request->input('title');
         $movie->director = $request->input('director');
