@@ -12,13 +12,12 @@ class DateAndTitleUnique implements Rule
      *
      * @return void
      */
-    public function __construct($releaseDate)
+    public function __construct()
     {
-        $this->releaseDate = $releaseDate;
     }
 
     /**
-     * Determine if the validation rule passes.
+     * Determine if the validation rule passes. 
      *
      * @param  string  $attribute
      * @param  mixed  $value
@@ -26,12 +25,14 @@ class DateAndTitleUnique implements Rule
      */
     public function passes($attribute, $value)
     {
-        if(Movie::where('title', $value)->first()){
+        if($movie = Movie::where('title', $value)->first()){
 
-            if(Movie::where('releaseDate',  $this->releaseDate)->first()){
+            if(Movie::where('releaseDate',  $movie->releaseDate)->first()){
                 return false;
             }
         }
+
+        
 
         return true;
     }

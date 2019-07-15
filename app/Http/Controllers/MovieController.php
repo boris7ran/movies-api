@@ -104,7 +104,7 @@ class MovieController extends Controller
     {
         $movie = Movie::find($id);
 
-        $this->validate($request, ['title' => new DateAndTitleUnique($request->input('releaseDate'))]);
+        $this->validate($request, ['title' => new DateAndTitleUnique()]);
 
         $request->duration = intval($request->duration);
 
@@ -134,7 +134,7 @@ class MovieController extends Controller
 
         $movie->delete();
 
-        return 'Movie ' . $movie->title . 'succesfully deleted!';
+        return 'Movie ' . $movie->title . ' succesfully deleted!';
     }
     
     private function dateAndTitleUnique(){
